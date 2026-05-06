@@ -17,7 +17,7 @@ function Section({ title, children, defaultOpen=true }: any) {
   const [open,setOpen]=useState(defaultOpen);
   return (
     <div style={{ background:'var(--bg2)', border:'1px solid var(--border)', borderRadius:10, overflow:'hidden', marginBottom:12 }}>
-      <button onClick={()=>setOpen(o=>!o)} style={{
+      <button onClick={()=>setOpen((o: boolean)=>!o)} style={{
         width:'100%', background:'none', border:'none', cursor:'pointer',
         padding:'12px 16px', display:'flex', justifyContent:'space-between',
         alignItems:'center', color:'var(--text)',
