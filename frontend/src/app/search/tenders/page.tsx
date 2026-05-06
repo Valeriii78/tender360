@@ -1,10 +1,10 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { ExportButton } from '@/components/Layout';
 
-export default function SearchTendersPage() {
+function SearchTendersInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -311,5 +311,13 @@ export default function SearchTendersPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SearchTendersPage() {
+  return (
+    <Suspense fallback={<div style={{ padding:40, textAlign:'center', color:'var(--muted)' }}>⏳ Завантаження...</div>}>
+      <SearchTendersInner />
+    </Suspense>
   );
 }
