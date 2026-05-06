@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/.next/
+**/dist/
+
+# Environment files
+.env
+**/.env
+.env.local
+**/.env.local
+
+# Logs
+*.log
+**/*.log
+
+# macOS
+.DS_Store
+**/__MACOSX/
+
+# Temp files
+tmp/
+*.xml
+*.zip
