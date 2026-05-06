@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
@@ -15,7 +15,7 @@ const REGIONS = [
   'Чернігівська',
 ];
 
-export default function SearchCompaniesPage() {
+function SearchCompaniesInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -45,14 +45,9 @@ export default function SearchCompaniesPage() {
 
   return (
     <div style={{ display:'flex', height:'calc(100vh - 52px)', overflow:'hidden' }}>
-
-      {/* Filters sidebar */}
       <div style={{ width:220, background:'var(--bg2)', borderRight:'1px solid var(--border)',
         padding:16, overflowY:'auto', flexShrink:0 }}>
-        <div style={{ fontSize:12, fontWeight:700, color:'var(--muted)', letterSpacing:.8, marginBottom:14 }}>
-          ФІЛЬТРИ
-        </div>
-
+        <div style={{ fontSize:12, fontWeight:700, color:'var(--muted)', letterSpacing:.8, marginBottom:14 }}>ФІЛЬТРИ</div>
         <div style={{ marginBottom:12 }}>
           <label style={{ fontSize:11, color:'var(--faint)', display:'block', marginBottom:4 }}>Пошуковий запит</label>
           <input value={q} onChange={e=>setQ(e.target.value)}
@@ -61,7 +56,6 @@ export default function SearchCompaniesPage() {
             style={{ width:'100%', background:'var(--bg3)', border:'1px solid var(--border)',
               borderRadius:6, padding:'7px 10px', fontSize:12, color:'var(--text)' }}/>
         </div>
-
         <div style={{ marginBottom:12 }}>
           <label style={{ fontSize:11, color:'var(--faint)', display:'block', marginBottom:4 }}>Регіон</label>
           <select value={region} onChange={e=>setRegion(e.target.value)}
@@ -71,7 +65,6 @@ export default function SearchCompaniesPage() {
             {REGIONS.filter(Boolean).map(r=><option key={r} value={r}>{r}</option>)}
           </select>
         </div>
-
         <div style={{ marginBottom:16 }}>
           <label style={{ fontSize:11, color:'var(--faint)', display:'block', marginBottom:4 }}>Статус</label>
           {['', 'зареєстровано', 'припинено', 'в стані припинення'].map(s=>(
@@ -81,12 +74,10 @@ export default function SearchCompaniesPage() {
             </label>
           ))}
         </div>
-
         <button onClick={()=>doSearch(0)} style={{
           width:'100%', background:'var(--accent)', color:'#fff', border:'none',
           borderRadius:7, padding:'8px', fontSize:13, fontWeight:600, cursor:'pointer',
         }}>🔍 Знайти</button>
-
         {results && (
           <button onClick={()=>{ setQ(''); setRegion(''); setStatus('зареєстровано'); setResults(null); }}
             style={{ width:'100%', background:'none', border:'1px solid var(--border)', color:'var(--muted)',
@@ -95,8 +86,6 @@ export default function SearchCompaniesPage() {
           </button>
         )}
       </div>
-
-      {/* Results */}
       <div style={{ flex:1, overflowY:'auto', padding:20 }}>
         {!results && !loading && (
           <div style={{ padding:60, textAlign:'center', color:'var(--faint)' }}>
@@ -104,11 +93,7 @@ export default function SearchCompaniesPage() {
             <div style={{ fontSize:14 }}>Введіть назву або ЄДРПОУ компанії для пошуку</div>
           </div>
         )}
-
-        {loading && (
-          <div style={{ padding:40, textAlign:'center', color:'var(--muted)' }}>⏳ Шукаю...</div>
-        )}
-
+        {loading && <div style={{ padding:40, textAlign:'center', color:'var(--muted)' }}>⏳ Шукаю...</div>}
         {results && !loading && (
           <>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14 }}>
@@ -117,7 +102,6 @@ export default function SearchCompaniesPage() {
               </span>
               <ExportButton params={{ q, region, status }} label="Експорт"/>
             </div>
-
             <div style={{ background:'var(--bg2)', border:'1px solid var(--border)', borderRadius:10, overflow:'hidden' }}>
               <table style={{ width:'100%', borderCollapse:'collapse' }}>
                 <thead>
@@ -135,32 +119,18 @@ export default function SearchCompaniesPage() {
                       onMouseOver={e=>(e.currentTarget.style.background='var(--bg3)')}
                       onMouseOut={e=>(e.currentTarget.style.background='')}
                       onClick={()=>router.push(`/company/${c.edrpou}`)}>
-                      <td style={{ padding:'10px 12px', fontFamily:'monospace', fontSize:12,
-                        color:'var(--accent)', whiteSpace:'nowrap' }}>{c.edrpou}</td>
+                      <td style={{ padding:'10px 12px', fontFamily:'monospace', fontSize:12, color:'var(--accent)', whiteSpace:'nowrap' }}>{c.edrpou}</td>
                       <td style={{ padding:'10px 12px', maxWidth:280 }}>
-                        <div style={{ fontSize:12, fontWeight:500, color:'var(--text)',
-                          overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                          {c.short_name || c.name}
-                        </div>
-                        {c.short_name && (
-                          <div style={{ fontSize:10, color:'var(--faint)', marginTop:1,
-                            overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                            {c.name}
-                          </div>
-                        )}
+                        <div style={{ fontSize:12, fontWeight:500, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.short_name || c.name}</div>
+                        {c.short_name && <div style={{ fontSize:10, color:'var(--faint)', marginTop:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.name}</div>}
                       </td>
-                      <td style={{ padding:'10px 12px', fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>
-                        {c.region ?? '—'}
-                      </td>
+                      <td style={{ padding:'10px 12px', fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{c.region ?? '—'}</td>
                       <td style={{ padding:'10px 12px' }}>
-                        <span style={{
-                          fontSize:10, padding:'2px 7px', borderRadius:10, fontWeight:600,
+                        <span style={{ fontSize:10, padding:'2px 7px', borderRadius:10, fontWeight:600,
                           background: c.status==='зареєстровано' ? 'rgba(16,185,129,.12)' : 'rgba(239,68,68,.12)',
-                          color: c.status==='зареєстровано' ? 'var(--green)' : 'var(--red)',
-                        }}>{c.status}</span>
+                          color: c.status==='зареєстровано' ? 'var(--green)' : 'var(--red)' }}>{c.status}</span>
                       </td>
-                      <td style={{ padding:'10px 12px', fontSize:10, color:'var(--faint)',
-                        maxWidth:160, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                      <td style={{ padding:'10px 12px', fontSize:10, color:'var(--faint)', maxWidth:160, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
                         {c.primary_kved && `${c.primary_kved} ${c.primary_kved_name?.slice(0,30)}`}
                       </td>
                       <td style={{ padding:'10px 12px', textAlign:'center' }}>
@@ -168,30 +138,17 @@ export default function SearchCompaniesPage() {
                         {c.is_buyer && <span title="Замовник тендерів" style={{ fontSize:14 }}>🏛️</span>}
                       </td>
                       <td style={{ padding:'10px 12px', textAlign:'center' }}>
-                        {c.has_sanctions
-                          ? <span style={{ fontSize:11, color:'var(--red)', fontWeight:700 }}>🚫 Так</span>
-                          : <span style={{ fontSize:11, color:'var(--faint)' }}>—</span>}
+                        {c.has_sanctions ? <span style={{ fontSize:11, color:'var(--red)', fontWeight:700 }}>🚫 Так</span> : <span style={{ fontSize:11, color:'var(--faint)' }}>—</span>}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-
-              {/* Pagination */}
-              <div style={{ padding:'10px 14px', borderTop:'1px solid var(--border)',
-                display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                <span style={{ fontSize:11, color:'var(--faint)' }}>
-                  Сторінка {page+1} з {Math.ceil((results.total||0)/LIMIT)}
-                </span>
+              <div style={{ padding:'10px 14px', borderTop:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <span style={{ fontSize:11, color:'var(--faint)' }}>Сторінка {page+1} з {Math.ceil((results.total||0)/LIMIT)}</span>
                 <div style={{ display:'flex', gap:8 }}>
-                  <button disabled={page===0} onClick={()=>doSearch(page-1)}
-                    style={{ background:'var(--bg3)', border:'1px solid var(--border)', color:'var(--text)',
-                      borderRadius:5, padding:'4px 12px', fontSize:12, cursor:'pointer',
-                      opacity: page===0 ? .4 : 1 }}>← Назад</button>
-                  <button disabled={(page+1)*LIMIT>=results.total} onClick={()=>doSearch(page+1)}
-                    style={{ background:'var(--bg3)', border:'1px solid var(--border)', color:'var(--text)',
-                      borderRadius:5, padding:'4px 12px', fontSize:12, cursor:'pointer',
-                      opacity: (page+1)*LIMIT>=results.total ? .4 : 1 }}>Далі →</button>
+                  <button disabled={page===0} onClick={()=>doSearch(page-1)} style={{ background:'var(--bg3)', border:'1px solid var(--border)', color:'var(--text)', borderRadius:5, padding:'4px 12px', fontSize:12, cursor:'pointer', opacity: page===0 ? .4 : 1 }}>← Назад</button>
+                  <button disabled={(page+1)*LIMIT>=results.total} onClick={()=>doSearch(page+1)} style={{ background:'var(--bg3)', border:'1px solid var(--border)', color:'var(--text)', borderRadius:5, padding:'4px 12px', fontSize:12, cursor:'pointer', opacity: (page+1)*LIMIT>=results.total ? .4 : 1 }}>Далі →</button>
                 </div>
               </div>
             </div>
@@ -199,5 +156,13 @@ export default function SearchCompaniesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SearchCompaniesPage() {
+  return (
+    <Suspense fallback={<div style={{ padding:40, textAlign:'center', color:'var(--muted)' }}>⏳ Завантаження...</div>}>
+      <SearchCompaniesInner />
+    </Suspense>
   );
 }
