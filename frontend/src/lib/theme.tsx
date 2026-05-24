@@ -28,46 +28,49 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export const useTheme = () => useContext(ThemeCtx);
 
-// CSS змінні для обох тем
 export const THEME_VARS = `
   :root[data-theme="light"] {
-    --bg:        #f7f8fa;
-    --bg2:       #ffffff;
-    --bg3:       #f0f4f8;
-    --border:    #e2e8f0;
-    --border2:   #cbd5e1;
-    --text:      #0f172a;
-    --text2:     #334155;
-    --muted:     #64748b;
-    --faint:     #94a3b8;
-    --accent:    #0ea5e9;
-    --accent2:   #0284c7;
+    --bg:        #F5F7FA;
+    --bg2:       #FFFFFF;
+    --bg3:       #EEF2F7;
+    --border:    #D1DCE8;
+    --border2:   #B0C4D8;
+    --text:      #0B1B33;
+    --text2:     #1E3A5F;
+    --muted:     #4A6080;
+    --faint:     #7A95B0;
+    --accent:    #0073FF;
+    --accent2:   #0058CC;
+    --nav-bg:    #0B1B33;
+    --nav-text:  #FFFFFF;
     --green:     #10b981;
     --red:       #ef4444;
     --amber:     #f59e0b;
     --purple:    #8b5cf6;
-    --tag-bg:    #eff6ff;
-    --tag-text:  #1d4ed8;
+    --tag-bg:    #E8F0FF;
+    --tag-text:  #0073FF;
     --sidebar-w: 220px;
   }
   :root[data-theme="dark"] {
-    --bg:        #0c0f14;
-    --bg2:       #111827;
-    --bg3:       #1a2035;
-    --border:    #1e293b;
-    --border2:   #334155;
-    --text:      #f1f5f9;
-    --text2:     #cbd5e1;
-    --muted:     #94a3b8;
-    --faint:     #64748b;
-    --accent:    #38bdf8;
-    --accent2:   #0ea5e9;
+    --bg:        #0B1B33;
+    --bg2:       #0D2144;
+    --bg3:       #102650;
+    --border:    #1A3560;
+    --border2:   #234070;
+    --text:      #FFFFFF;
+    --text2:     #C8D8F0;
+    --muted:     #8AA8CC;
+    --faint:     #5A7A99;
+    --accent:    #0073FF;
+    --accent2:   #3395FF;
+    --nav-bg:    #060E1A;
+    --nav-text:  #FFFFFF;
     --green:     #4ade80;
     --red:       #f87171;
     --amber:     #fbbf24;
     --purple:    #a78bfa;
-    --tag-bg:    #1e3a5f;
-    --tag-text:  #93c5fd;
+    --tag-bg:    #0D2A55;
+    --tag-text:  #5BA3FF;
     --sidebar-w: 220px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color .2s, color .2s, border-color .2s; }
